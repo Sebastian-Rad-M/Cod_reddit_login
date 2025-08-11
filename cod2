@@ -1,0 +1,138 @@
+using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace program
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            reddit_interface.Menu();
+        }
+    }
+
+    public class reddit_user
+    {
+        public string Username;
+        public string PasswordHash; 
+
+        public reddit_user(string username, string passwordHash)
+        {
+            Username = username;
+            PasswordHash = passwordHash;
+        }
+    }
+
+    public static class reddit_interface
+    {
+        private static List<reddit_user> users = new List<reddit_user>();
+        private static bool logged_in = false;
+        private static reddit_user current_user = null;
+
+        private static string ComputeSha256Hash(string rawData)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
+        public static void register()
+        {
+            Console.Write("Username: ");
+            string name = Console.ReadLine();
+            Console.Write("Password: ");
+            string pass = Console.ReadLine();
+            Console.Write("Repeat Password: ");
+            string pass2 = Console.ReadLine();
+
+            if (pass == pass2)
+            {
+                string hashedPass = ComputeSha256Hash(pass);
+                users.Add(new reddit_user(name, hashedPass));
+                Console.WriteLine("Registration successful!");
+            }
+            else
+            {
+                Console.WriteLine("Passwords do not match!");
+            }
+
+            Console.WriteLine("Press Enter to continue...");
+            Console.ReadLine();
+        }
+
+        public static void login()
+        {
+            Console.WriteLine("Log In:");
+            Console.Write("Username: ");
+            string name = Console.ReadLine();
+            Console.Write("Password: ");
+            string pass = Console.ReadLine();
+
+            string hashedPass = ComputeSha256Hash(pass);
+
+            foreach (var u in users)
+            {
+                if (u.Username == name && u.PasswordHash == hashedPass)
+                {
+                    logged_in = true;
+                    current_user = u;
+                    Console.WriteLine("Login successful!");
+                    Console.ReadLine();
+                    return;
+                }
+            }
+
+            Console.WriteLine("Invalid username or password.");
+            Console.ReadLine();
+        }
+
+        public static void Menu()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                if (logged_in)
+                {
+                    Console.WriteLine("Name: " + current_user.Username);
+                    Console.WriteLine("Number of posts: 22");
+                    Console.WriteLine("1. Logout");
+                    Console.WriteLine("2. Quit");
+
+                    int choice = Convert.ToInt32(Console.ReadLine());
+
+                    if (choice == 1)
+                    {
+                        logged_in = false;
+                        current_user = null;
+                    }
+                    else if (choice == 2)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("1. Login");
+                    Console.WriteLine("2. Register");
+                    Console.WriteLine("3. Quit");
+
+                    int choice = Convert.ToInt32(Console.ReadLine());
+
+                    if (choice == 1) login();
+                    else if (choice == 2) register();
+                    else if (choice == 3) break;
+                }
+            }
+        }
+    }
+}
