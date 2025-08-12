@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+using static ConsoleApp09_08.model;
+using static ConsoleApp09_08.View;
+namespace ConsoleApp09_08
+{ 
+    internal class Program
+
+    {
+        static void Main(string[] args)
+        {
+            
+            RedditInterface.Menu();
+        }
+    } 
+}
+
