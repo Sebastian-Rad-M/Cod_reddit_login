@@ -1,0 +1,204 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using static ConsoleApp09_08.model;
+
+namespace ConsoleApp09_08
+{
+    internal class View
+    {   
+        
+        public class RedditInterface
+        {
+
+            private static bool loggedIn = false;
+            private static RedditUser currentUser = null;
+            
+            public static void Register()
+            {
+                Console.Write("Username: ");
+                string name = Console.ReadLine();
+                foreach (var u in model.users)
+                {
+                    if (u.username == name)
+                    {
+                        Console.WriteLine("That username is already taken.");
+                        Console.ReadLine();
+                        return;
+                    }
+                }
+
+                Console.Write("Password: ");
+                string pass = Console.ReadLine();
+                Console.Write("Repeat Password: ");
+                string pass2 = Console.ReadLine();
+
+                if (pass == pass2)
+                {
+                    string hashedPass = model.ComputeSha256Hash(pass);
+                    model.users.Add(new RedditUser(name, hashedPass));
+                    Console.WriteLine("Registration successful!");
+                }
+                else
+                {
+                    Console.WriteLine("Passwords do not match!");
+                }
+
+                Console.WriteLine("Press Enter to continue...");
+                Console.ReadLine();
+                
+            }
+
+            public static void Login()
+            {
+                Console.WriteLine("Log In:");
+                Console.Write("Username: ");
+                string name = Console.ReadLine();
+                Console.Write("Password: ");
+                string pass = Console.ReadLine();
+
+                string hashedPass = model.ComputeSha256Hash(pass);
+
+                foreach (var u in model.users)
+                {
+                    if (u.username == name && u.passwordHash == hashedPass)
+                    {
+                        loggedIn = true;
+                        currentUser = u;
+                        Console.WriteLine("Login successful!");
+                        Console.ReadLine();
+                        return;
+                    }
+                }
+
+                Console.WriteLine("Invalid username or password.");
+                Console.ReadLine();
+            }
+            public static void ChangeUsername()
+            {
+                Console.Write("Enter new username: ");
+                string newUsername = Console.ReadLine();
+
+                foreach (var u in model.users)
+                {
+                    if (u.username == newUsername)
+                    {
+                        Console.WriteLine("That username is already taken.");
+                        Console.ReadLine();
+                        return;
+                    }
+                }
+
+             
+                currentUser.username = newUsername;
+                Console.WriteLine("Username changed successfully!");
+                Console.ReadLine();
+            }
+            public static void EditPassword() 
+            {
+                Console.Write("Old password: ");
+                string pass = Console.ReadLine();
+                string hashedPass = model.ComputeSha256Hash(pass);
+                if (currentUser.passwordHash != hashedPass)
+                {
+                    Console.WriteLine("Wrong Password");
+                    Console.ReadLine();
+                    return;
+                }
+                Console.Write("New password: ");
+                string pass2 = Console.ReadLine();
+                Console.Write("New password (again): ");
+                string pass3 = Console.ReadLine();
+                if(pass2!=pass3)
+                {
+                    Console.WriteLine("Passwords dont match");
+                    Console.ReadLine();
+                    return;
+                }
+                currentUser.passwordHash= model.ComputeSha256Hash(pass2);
+                Console.WriteLine("Password changed succesfuly");
+                Console.ReadLine();
+                return;
+
+            }
+            public static void DeleteAccount()
+            {
+                Console.Write("Confirm password: ");
+                string pass = Console.ReadLine();
+                string hashedPass = model.ComputeSha256Hash(pass);
+                if (currentUser.passwordHash != hashedPass)
+                {
+                    Console.WriteLine("Wrong Password");
+                    Console.ReadLine();
+                    return;
+                }
+                model.users.Remove(currentUser);
+                loggedIn = false;
+                currentUser = null;
+                Console.WriteLine("Your account has been deleted.");
+
+            }
+
+            public static void Menu()
+            {
+                while (true)
+                {
+                    Console.Clear();
+
+                    if (loggedIn)
+                    {
+                        Console.WriteLine("Name: " + currentUser.username);
+                        Console.WriteLine("Number of posts: 22");
+                        Console.WriteLine("1. Logout");
+                        Console.WriteLine("2. Quit");
+                        Console.WriteLine("3. Edit Username");
+                        Console.WriteLine("4. Change Password");
+                        Console.WriteLine("5. Delete Account");
+
+                        int choice = Convert.ToInt32(Console.ReadLine());
+
+                        if (choice == 1)
+                        {
+                            loggedIn = false;
+                            currentUser = null;
+                        }
+                        else if (choice == 2)
+                        {
+                            break;
+                        }
+                        else if (choice == 3)
+                        {
+                            ChangeUsername();
+                        }
+                        else if (choice == 4)
+                        {
+                            EditPassword();
+                        }
+                        else if (choice == 5)
+                        {
+                            DeleteAccount();
+                        }
+
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("1. Login");
+                        Console.WriteLine("2. Register");
+                        Console.WriteLine("3. Quit");
+
+                        int choice = Convert.ToInt32(Console.ReadLine());
+
+                        if (choice == 1) Login();
+                        else if (choice == 2) Register();
+                        else if (choice == 3) break;
+                    }
+                }
+            }
+        }
+    }
+}
