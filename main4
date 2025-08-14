@@ -11,3 +11,6 @@ namespace Reddit_app
         }
     } 
 }
+//- frumos ar fi sa ai fct bool de IsLoggedInSession - sau cum vrei tu sa o botezi, care da, o sa fie one-liner de currentUser != null
+//nu inteleg aici (in view) where would i use this
+
