@@ -6,11 +6,10 @@ namespace Reddit_app
     {
         static void Main(string[] args)
         {
-            
-            RedditInterface.Menu();
+            RedditModel.DummyData();
+            ViewManager viewManager = new ViewManager();
+            viewManager.currentView.Run();
         }
     } 
 }
-//- frumos ar fi sa ai fct bool de IsLoggedInSession - sau cum vrei tu sa o botezi, care da, o sa fie one-liner de currentUser != null
-//nu inteleg aici (in view) where would i use this
 
