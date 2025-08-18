@@ -1,0 +1,17 @@
+
+namespace Reddit_app
+{
+    internal class LoggedOutView: View
+    {
+        public LoggedOutView()
+        {
+            content = "You are logged out. Please log in to continue.";
+            menu = new List<Option>
+            {
+                new Option(1, "Log In", RedditInterface.Login),
+                new Option(2, "Exit", () => Environment.Exit(0))
+            };
+        }
+        
+    }
+}
