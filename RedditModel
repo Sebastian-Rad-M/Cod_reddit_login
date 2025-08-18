@@ -1,0 +1,66 @@
+
+namespace Reddit_app
+{
+    internal class RedditModel
+    {
+        private RedditModel() { }
+       
+        public static RedditModel instance  { get { return Nested.instance; } }
+        private class Nested
+        {   
+            static Nested() { }
+            internal static readonly RedditModel instance = new RedditModel();
+        }
+
+
+        private List<RedditUser> users = new List<RedditUser>();
+      
+        public RedditUser GetRedditUserByUsername(string username)
+        {
+            return users.FirstOrDefault(u => u.username == username);
+            //users.OrderBy(u => u.username).ToList();
+        }
+        public bool AddNewUser(string username, string pass)
+        {   if(GetRedditUserByUsername(username)!=null) {return false;}
+            users.Add(new RedditUser(username, pass)); return true;
+        } 
+        public void DeleteUser(RedditUser u)
+        {
+            users.Remove(u);
+        }
+
+        private List<RedditPost> posts = new List<RedditPost>();
+        public List<RedditPost> GetAllPosts()
+        {
+            return posts;
+        }
+        public List<RedditPost> GetPostsByUser(string username)
+        {
+            return posts.Where(p => p.author == username).ToList();
+        }
+        public void AddPost(RedditPost post)
+        {
+            posts.Add(post);
+        }
+        public void RemovePost(RedditPost post)
+        {
+            posts.Remove(post);
+        }
+        public void UpdatePost(RedditPost post, string newTitle, string newContent)
+        {
+            post.title = newTitle;
+            post.content = newContent;
+        }
+        public static void DummyData()
+        {
+            RedditModel.instance.AddNewUser("alex", "alex");
+            RedditModel.instance.AddNewUser("bogdan", "bogdan");
+            RedditModel.instance.AddNewUser("cristina", "cristina");
+            RedditModel.instance.AddPost(new RedditPost("alex", "Salut!", "prima mea postare"));
+
+
+        }
+    }
+
+
+}
