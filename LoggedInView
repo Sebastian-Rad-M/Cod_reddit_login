@@ -1,0 +1,28 @@
+
+
+namespace Reddit_app
+{
+    internal class LoggedInView : View
+    {
+        public LoggedInView()
+        {
+            if (ViewManager.currentUser != null)
+            {
+                content = "Name: " + ViewManager.currentUser.username;
+            }
+            else
+            {
+                content = "No user is currently logged in.";
+            }
+            menu = new List<Option>
+            {
+                new Option(1, "Log out", () => RedditInterface.Logout()),
+                new Option(2, "Exit", () => Environment.Exit(0)),
+                new Option(3, "Change Username", () => Environment.Exit(0)),
+                new Option(4, "Change Username", () => Environment.Exit(0)),
+                new Option(5, "Delete account", () => Environment.Exit(0))
+            };
+        }
+
+    }
+}
