@@ -1,0 +1,179 @@
+
+namespace Reddit_app
+{
+    internal class RedditInterface
+    {
+        public static void Register()
+        {
+            Console.Write("Username: ");
+            string name = Console.ReadLine();
+            if (RedditModel.instance.GetRedditUserByUsername(name) != null)
+            { Console.Write("Username taken"); return; }
+            Console.Write("Password: ");
+            string pass = Console.ReadLine();
+            Console.Write("Repeat Password: ");
+            string pass2 = Console.ReadLine();
+
+            if (pass == pass2)
+            {
+                RedditModel.instance.AddNewUser(name, pass);
+                Console.WriteLine("Registration successful!");
+            }
+            else
+            {
+                Console.WriteLine("Passwords do not match!");
+            }
+
+            Console.WriteLine("Press Enter to continue...");
+            Console.ReadLine();
+
+        }
+        public static void Login()
+        {
+            Console.WriteLine("Log In:");
+            Console.Write("Username: ");
+            string name = Console.ReadLine();
+            Console.Write("Password: ");
+            string pass = Console.ReadLine();
+            RedditUser u = RedditModel.instance.GetRedditUserByUsername(name);
+            if (u != null)
+            {
+                if (u.CheckPass(pass))
+                {
+                    Console.WriteLine("Login successful!");
+                    ViewManager.currentUser = u;
+                    ViewManager.SwitchToView(2); //a se scoate numerele magice de aici
+                    return;
+                }
+            }
+            Console.WriteLine("Invalid username or password.");
+            Console.ReadLine();
+        }
+        public static void Logout()
+        {
+            ViewManager.currentUser = null;
+            Console.WriteLine("Logged out succesfully");
+        }
+        public static void EditPassword()
+        {
+            Console.Write("Old password: ");
+            string pass = Console.ReadLine();
+
+            if (ViewManager.currentUser.CheckPass(pass) == false)
+            {
+                Console.WriteLine("Wrong Password");
+                Console.ReadLine();
+                return;
+            }
+            Console.Write("New password: ");
+            string pass2 = Console.ReadLine();
+            Console.Write("New password (again): ");
+            string pass3 = Console.ReadLine();
+            if (pass2 != pass3)
+            {
+                Console.WriteLine("Passwords dont match");
+                Console.ReadLine();
+                return;
+            }
+            ViewManager.currentUser.ChangePass(pass2);
+            Console.WriteLine("Password changed succesfuly");
+            Console.ReadLine();
+
+        }
+        public static void DeleteAccount()
+        {
+            Console.Write("Confirm password: ");
+            string pass = Console.ReadLine();
+            if (ViewManager.currentUser.CheckPass(pass) == false)
+            {
+                Console.WriteLine("Wrong Password");
+                Console.ReadLine();
+                return;
+            }
+            RedditModel.instance.DeleteUser(ViewManager.currentUser);
+            Console.WriteLine("Your account has been deleted.");
+            Logout();
+        }
+        public static void ChangeUsername()
+        {
+            Console.WriteLine("New username:");
+            string name = Console.ReadLine();
+            ViewManager.currentUser.ChangeUsername(name);
+        }
+        public static void ShowPosts()
+        {
+            var posts = RedditModel.instance.GetAllPosts();
+            if (posts.Count == 0)
+            {
+                Console.WriteLine("No posts yet.");
+                return;
+            }
+            foreach (var post in posts)
+            {
+                Console.WriteLine(post.author + " " + post.title + " " + post.content);
+            }
+        }
+        private static void DisplayUserPosts()
+        {
+            var posts = RedditModel.instance.GetPostsByUser(ViewManager.currentUser.username);
+            if (posts.Count == 0)
+            {
+                Console.WriteLine("You have no posts.");
+                return;
+            }
+
+            for (int i = 0; i < posts.Count; i++)
+            {
+                Console.WriteLine(posts[i].title + " " + posts[i].content);
+            }
+        }
+        public static void CreatePost()
+
+        {
+            Console.Write("Title: ");
+            string title = Console.ReadLine();
+            Console.Write("Content: ");
+            string content = Console.ReadLine();
+
+            var post = new RedditPost(ViewManager.currentUser.username, title, content);
+            RedditModel.instance.AddPost(post);
+            Console.WriteLine("Post added!");
+        }
+        public static void EditOrDeletePost()
+        {
+            var posts = RedditModel.instance.GetPostsByUser(ViewManager.currentUser.username);
+            if (posts.Count == 0)
+            {
+                Console.WriteLine("You have no posts to edit or delete.");
+                return;
+            }
+            DisplayUserPosts();
+            Console.Write("Choose post number: ");
+            int choice = Convert.ToInt32(Console.ReadLine());
+            if (choice > 0 && choice <= posts.Count)
+            {
+                var post = posts[choice - 1];
+
+                Console.Write("Edit (E) or Delete (D)? ");
+                string action = Console.ReadLine().ToUpper();
+
+                if (action == "E") EditPost(post);
+                else if (action == "D") RedditModel.instance.RemovePost(post);
+            }
+            else
+            {
+                Console.WriteLine("Invalid selection.");
+            }
+        }
+        private static void EditPost(RedditPost post)
+        {
+            Console.Write("New title: ");
+            string newTitle = Console.ReadLine();
+            Console.Write("New content: ");
+            string newContent = Console.ReadLine();
+
+            RedditModel.instance.UpdatePost(post, newTitle, newContent);
+            Console.WriteLine("Post updated!");
+        }
+    }
+}
