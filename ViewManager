@@ -1,0 +1,25 @@
+
+namespace Reddit_app
+{
+    internal class ViewManager
+    {
+        public static RedditUser currentUser = null;
+
+        List<View> views = new List<View>();
+        public View currentView;
+              public ViewManager()
+              {
+                views.Add(new LoggedOutView());
+                views.Add(new LoggedInView());
+                currentView = views[0];
+              }
+        public void SwitchToView(int index)
+        {
+            if (index >= 0 && index < views.Count)
+            {
+                currentView = views[index];
+            }
+           
+        }
+    }
+}
