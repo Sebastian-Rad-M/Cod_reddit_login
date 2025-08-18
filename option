@@ -1,0 +1,19 @@
+
+namespace Reddit_app
+{
+    internal class Option
+    {
+        public int optionId;
+        public string optionText;
+        public delegate void OptionAction();
+        public OptionAction optionAction;
+
+        public Option(int optionId, string optionText, OptionAction optionAction)
+        {
+            this.optionId = optionId;
+            this.optionText = optionText;
+            this.optionAction = optionAction;
+        }
+    }
+}
+
