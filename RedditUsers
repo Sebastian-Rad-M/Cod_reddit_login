@@ -53,5 +53,9 @@ namespace Reddit_app
             if (CheckUsernameExists(name)) return false;  
             username = name; return true;
         }
+        public Guid UserUuid(RedditUser u) 
+        { 
+        return u.uuid;
+         }
     }
     }
