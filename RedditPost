@@ -1,0 +1,22 @@
+
+namespace Reddit_app
+{
+    internal class RedditPost
+    {
+        readonly Guid uuid = Guid.NewGuid();
+      //  Guid authorUuid;
+        public string author;
+        public string title;
+        public string content;
+        readonly public DateTime time = DateTime.UtcNow;
+        public RedditPost(string postAuthorName, string postTitle, string postContent)
+        {
+
+         //   authorUuid = RedditUser.UserUuid(RedditModel.instance.GetRedditUserByUsername(postAuthorName));
+            author = postAuthorName;
+            title = postTitle;
+            content = postContent;
+        }
+
+    }
+}
