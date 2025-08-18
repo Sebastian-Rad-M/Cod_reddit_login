@@ -1,183 +1,54 @@
+
 namespace Reddit_app
 {
     internal class View
     {   
+        protected string content;
+        protected List<Option> menu;
+        protected void Initialize() {
         
-        public class RedditInterface
+        }
+        protected void Draw()
         {
-            private const int loginOption = 1;
-            private const int registerOption = 3;
-            private const int quitOption = 2;
-
-            private const int logoutOption = 1;
-            private const int quitLoggedInOption = 2;
-            private const int changeUsernameOption = 3;
-            private const int changePasswordOption = 4;
-            private const int deleteAccountOption = 5;
-
-            private static RedditUser currentUser = null;
-            
-            public static void Register()
+            Console.Clear();
+            Console.WriteLine(content);
+            foreach (var option in menu)
             {
-                Console.Write("Username: ");
-                string name = Console.ReadLine();
-                if (RedditModel.instance.GetRedditUserByUsername(name)!=null)
-                { Console.Write("Username taken"); return; }       
-                Console.Write("Password: ");
-                string pass = Console.ReadLine();
-                Console.Write("Repeat Password: ");
-                string pass2 = Console.ReadLine();
+                Console.WriteLine($"{option.optionId}. {option.optionText}");
+            }
+        }
+        public void Run() {
+            while (true)
+            {
+                Draw();
+                Console.Write("Select an option: ");
+                var input = Console.ReadLine();
 
-                if (pass == pass2)
+                if (int.TryParse(input, out int selectedId))
                 {
-                    RedditModel.instance.AddNewUser(name,pass);
-                    Console.WriteLine("Registration successful!");
+                    var selectedOption = menu.FirstOrDefault(opt => opt.optionId == selectedId);
+                    if (selectedOption != null)
+                    {
+                        selectedOption.optionAction?.Invoke();
+                        
+                        if (selectedOption.optionText == "Exit")
+                        {
+                            break;
+                        }
+                        // Add more actions here as needed
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option. Please try again.");
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Passwords do not match!");
-                }
-
-                Console.WriteLine("Press Enter to continue...");
-                Console.ReadLine();
-                
-            }
-            public static void Login()
-            {
-                Console.WriteLine("Log In:");
-                Console.Write("Username: ");
-                string name = Console.ReadLine();
-                Console.Write("Password: ");
-                string pass = Console.ReadLine();
-                RedditUser u= RedditModel.instance.GetRedditUserByUsername(name);
-                if (u != null)
-                {
-                    if (u.CheckPass(pass))
-                    {
-                        Console.WriteLine("Login successful!");
-                        currentUser = u;
-                        return;
-                    }
-                }
-                Console.WriteLine("Invalid username or password.");
-                Console.ReadLine();
-            }
-            public static void Logout()
-            {
-                currentUser = null;
-                Console.WriteLine("Logged out succesfully");
-            }
-            public static void EditPassword() 
-            {
-                Console.Write("Old password: ");
-                string pass = Console.ReadLine();
-
-                if (currentUser.CheckPass(pass)==false)
-                {
-                    Console.WriteLine("Wrong Password");
-                    Console.ReadLine();
-                    return;
-                }
-                Console.Write("New password: ");
-                string pass2 = Console.ReadLine();
-                Console.Write("New password (again): ");
-                string pass3 = Console.ReadLine();
-                if(pass2!=pass3)
-                {
-                    Console.WriteLine("Passwords dont match");
-                    Console.ReadLine();
-                    return;
-                }
-                currentUser.ChangePass(pass2);
-                Console.WriteLine("Password changed succesfuly");
-                Console.ReadLine();
-
-            }
-            public static void DeleteAccount()
-            {
-                Console.Write("Confirm password: ");
-                string pass = Console.ReadLine();
-                if (currentUser.CheckPass(pass) == false)
-                {
-                    Console.WriteLine("Wrong Password");
-                    Console.ReadLine();
-                    return;
-                }
-                RedditModel.instance.DeleteUser(currentUser);
-                Console.WriteLine("Your account has been deleted.");
-                Logout();
-            }
-            public static void ChangeUsername()
-            {
-                Console.WriteLine("New username:");
-                    string name= Console.ReadLine();
-                currentUser.ChangeUsername(name);
-            }
-            public static void Menu()
-            {   
-            
-                while (true)
-                {
-                    Console.Clear();
-
-                    if (currentUser!=null)
-                    {   
-                        Console.WriteLine("Name: " + currentUser.username);
-                        Console.WriteLine("Number of posts: 22");
-                        Console.WriteLine("1. Logout");
-                        Console.WriteLine("2. Quit");
-                        Console.WriteLine("3. Edit Username");
-                        Console.WriteLine("4. Change Password");
-                        Console.WriteLine("5. Delete Account");
-                        int imput = Convert.ToInt32(Console.ReadLine());
-                        switch (imput)
-                        {
-                            case logoutOption:
-                                Logout();
-                                break;
-                            case quitLoggedInOption:
-                                return;
-                            case changeUsernameOption:
-                                ChangeUsername();
-                                break;
-                            case changePasswordOption:
-                                EditPassword();
-                                break;
-                            case deleteAccountOption:
-                                DeleteAccount();
-                                break;
-                            default:
-                                Console.WriteLine("Invalid option");
-                                Console.ReadLine();
-                                break;
-                        }
-
-                    }
-                    else
-                    {  
-                        Console.WriteLine("1. Login");
-                        Console.WriteLine("2. Quit");
-                        Console.WriteLine("3. Register");
-                        int imput = Convert.ToInt32(Console.ReadLine());
-
-                        switch (imput)
-                        {
-                            case loginOption:
-                                Login();
-                                break;
-                            case registerOption:
-                                Register();
-                                break;
-                            case quitOption:
-                                return;
-                            default:
-                                Console.WriteLine("Invalid option");
-                                Console.ReadLine();
-                                break;
-                        }
-                    }
+                    Console.WriteLine("Please enter a valid number.");
                 }
             }
+
+
         }
     }
 }
