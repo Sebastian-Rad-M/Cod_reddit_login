@@ -18,8 +18,8 @@ namespace Reddit_app
             {
                 new Option(1, "Log out", () => RedditInterface.Logout()),
                 new Option(2, "Exit", () => Environment.Exit(0)),
-                new Option(3, "Change Username", () => Environment.Exit(0)),
-                new Option(4, "Change Username", () => Environment.Exit(0)),
+                new Option(3, "Change Username",()=> RedditInterface.ChangeUsername()),
+                new Option(4, "Change Username", () => RedditInterface.EditPassword()),
                 new Option(5, "Delete account", () => Environment.Exit(0))
             };
         }
