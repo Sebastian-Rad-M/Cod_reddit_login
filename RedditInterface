@@ -42,7 +42,10 @@ namespace Reddit_app
                 {
                     Console.WriteLine("Login successful!");
                     ViewManager.currentUser = u;
-                    ViewManager.SwitchToView(2); //a se scoate numerele magice de aici
+                    //ViewManager.SwitchToView(1);//a se scoate numerele magice de aici
+                    ViewManager.instance.SwitchToView(1);
+                 
+
                     return;
                 }
             }
