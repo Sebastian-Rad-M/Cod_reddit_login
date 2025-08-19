@@ -1,4 +1,3 @@
-using static Reddit_app.View;
 namespace Reddit_app
 { 
     internal class Program
@@ -7,8 +6,8 @@ namespace Reddit_app
         static void Main(string[] args)
         {
             RedditModel.DummyData();
-            ViewManager viewManager = new ViewManager();
-            viewManager.currentView.Run();
+            ViewManager.instance.InitializeViews();
+            ViewManager.instance.currentView.Run();
         }
     } 
 }
