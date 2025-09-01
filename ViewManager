@@ -3,8 +3,16 @@ namespace Reddit_app
 {
     internal class ViewManager
     {
-        private ViewManager() { }
-        public static ViewManager instance { get { return Nested.instance; } }
+        public const int loggedOut = 0;
+        public const int loggedIn = 1;
+        public ViewManager()
+        {
+            views.Add(loggedOut, new LoggedOutView(this));
+            views.Add(loggedIn, new LoggedInView(this));
+
+            currentView = views[loggedOut];
+        }
+       /* public static ViewManager instance { get { return Nested.instance; } }
         private class Nested
         {
             static Nested()
@@ -13,33 +21,20 @@ namespace Reddit_app
 
             internal static readonly ViewManager instance = new ViewManager();
         }
-
-        public static RedditUser currentUser = null;
-
-        List<View> views = new List<View>();
+       */
+        
+        public RedditUser currentUser = null;
+        private Dictionary<int, View> views = new Dictionary<int, View>();
         public View currentView;
-        public void InitializeViews()
-        {
-            views.Add(new LoggedOutView());
-            views.Add(new LoggedInView());
-            currentView = views[0];
-        }
-
-        public void SwitchToView(int index)
-        {
-            if (index >= 0 && index < views.Count)
-            {
-                currentView = views[index];
-            }
-            if (currentView != null)
-            {
-                //currentView.Initialize();
-                currentView.Run();
-            }
+       
+        public void SwitchToView(int viewId)
+        {   
+            if (views.ContainsKey(viewId)) { 
+                currentView = views[viewId];
+            currentView.Run(); }
             else
-            {
-                Console.WriteLine("Invalid view index.");
-            }
+                Console.WriteLine("Unknown view: " + viewId);
         }
     }
-}
+    }
+
