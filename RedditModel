@@ -57,6 +57,7 @@ namespace Reddit_app
             RedditModel.instance.AddNewUser("bogdan", "bogdan");
             RedditModel.instance.AddNewUser("cristina", "cristina");
             RedditModel.instance.AddPost(new RedditPost("alex", "Salut!", "prima mea postare"));
+            RedditModel.instance.AddPost(new RedditPost("bogdan", "cum modific data", "cum modific data calculatorului meu, model asus g234 cu gpu mai mare decat modelul anterior"));
 
 
         }
