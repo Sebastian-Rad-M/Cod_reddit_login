@@ -1,17 +1,23 @@
 
 namespace Reddit_app
 {
-    internal class LoggedOutView: View
+    internal class LoggedOutView : View
     {
-        public LoggedOutView()
+        public LoggedOutView(ViewManager vm) : base(vm)
         {
-            content = "You are logged out. Please log in to continue.";
+       
             menu = new List<Option>
             {
-                new Option(1, "Log In", RedditInterface.Login),
-                new Option(2, "Exit", () => Environment.Exit(0))
+                new Option(1, "Log In",  () => RedditInterface.Login(vm) ),
+                new Option(2, "Register", RedditInterface.Register),
+                new Option(3, "Exit", () => Environment.Exit(0))
             };
         }
-        
+        public override void Initialize()
+        {
+            content = "You are logged out. Please log in or register to continue.";
+            Console.WriteLine('\n');
+            RedditInterface.ShowPosts();
+        }
     }
 }
