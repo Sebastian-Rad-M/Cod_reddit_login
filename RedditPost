@@ -17,6 +17,13 @@ namespace Reddit_app
             title = postTitle;
             content = postContent;
         }
+        public void ShowPost() 
+        { 
+        Console.WriteLine(author + "---" + title);
+        if(content.Length>20) {Console.WriteLine(content.Substring(0,50)+"...");}
+        else {Console.WriteLine(content); }
+        Console.WriteLine('\n');
 
+        }
     }
 }
