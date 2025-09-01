@@ -6,8 +6,8 @@ namespace Reddit_app
         static void Main(string[] args)
         {
             RedditModel.DummyData();
-            ViewManager.instance.InitializeViews();
-            ViewManager.instance.currentView.Run();
+            var vm = new ViewManager();
+            vm.currentView.Run();
         }
     } 
 }
