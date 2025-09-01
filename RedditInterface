@@ -28,7 +28,7 @@ namespace Reddit_app
             Console.ReadLine();
 
         }
-        public static void Login()
+        public static void Login(ViewManager vm)
         {
             Console.WriteLine("Log In:");
             Console.Write("Username: ");
@@ -41,9 +41,9 @@ namespace Reddit_app
                 if (u.CheckPass(pass))
                 {
                     Console.WriteLine("Login successful!");
-                    ViewManager.currentUser = u;
-                    //ViewManager.SwitchToView(1);//a se scoate numerele magice de aici
-                    ViewManager.instance.SwitchToView(1);
+                    vm.currentUser = u;
+                
+                    vm.SwitchToView(ViewManager.loggedIn);
                  
 
                     return;
@@ -52,17 +52,18 @@ namespace Reddit_app
             Console.WriteLine("Invalid username or password.");
             Console.ReadLine();
         }
-        public static void Logout()
+        public static void Logout(ViewManager vm)
         {
-            ViewManager.currentUser = null;
+            vm.currentUser = null;
+            vm.SwitchToView(ViewManager.loggedOut);
             Console.WriteLine("Logged out succesfully");
         }
-        public static void EditPassword()
+        public static void EditPassword(ViewManager vm)
         {
             Console.Write("Old password: ");
             string pass = Console.ReadLine();
 
-            if (ViewManager.currentUser.CheckPass(pass) == false)
+            if (vm.currentUser.CheckPass(pass) == false)
             {
                 Console.WriteLine("Wrong Password");
                 Console.ReadLine();
@@ -78,30 +79,30 @@ namespace Reddit_app
                 Console.ReadLine();
                 return;
             }
-            ViewManager.currentUser.ChangePass(pass2);
+            vm.currentUser.ChangePass(pass2);
             Console.WriteLine("Password changed succesfuly");
             Console.ReadLine();
 
         }
-        public static void DeleteAccount()
+        public static void DeleteAccount(ViewManager vm)
         {
             Console.Write("Confirm password: ");
             string pass = Console.ReadLine();
-            if (ViewManager.currentUser.CheckPass(pass) == false)
+            if (vm.currentUser.CheckPass(pass) == false)
             {
                 Console.WriteLine("Wrong Password");
                 Console.ReadLine();
                 return;
             }
-            RedditModel.instance.DeleteUser(ViewManager.currentUser);
+            RedditModel.instance.DeleteUser(vm.currentUser);
             Console.WriteLine("Your account has been deleted.");
-            Logout();
+            Logout(vm);
         }
-        public static void ChangeUsername()
+        public static void ChangeUsername(ViewManager vm)
         {
             Console.WriteLine("New username:");
             string name = Console.ReadLine();
-            ViewManager.currentUser.ChangeUsername(name);
+            vm.currentUser.ChangeUsername(name);
         }
         public static void ShowPosts()
         {
@@ -113,12 +114,12 @@ namespace Reddit_app
             }
             foreach (var post in posts)
             {
-                Console.WriteLine(post.author + " " + post.title + " " + post.content);
+                post.ShowPost();
             }
         }
-        private static void DisplayUserPosts()
+        private static void DisplayUserPosts(ViewManager vm)
         {
-            var posts = RedditModel.instance.GetPostsByUser(ViewManager.currentUser.username);
+            var posts = RedditModel.instance.GetPostsByUser(vm.currentUser.username);
             if (posts.Count == 0)
             {
                 Console.WriteLine("You have no posts.");
@@ -127,10 +128,10 @@ namespace Reddit_app
 
             for (int i = 0; i < posts.Count; i++)
             {
-                Console.WriteLine(posts[i].title + " " + posts[i].content);
+                posts[i].ShowPost();
             }
         }
-        public static void CreatePost()
+        public static void CreatePost(ViewManager vm)
 
         {
             Console.Write("Title: ");
@@ -138,19 +139,19 @@ namespace Reddit_app
             Console.Write("Content: ");
             string content = Console.ReadLine();
 
-            var post = new RedditPost(ViewManager.currentUser.username, title, content);
+            var post = new RedditPost(vm.currentUser.username, title, content);
             RedditModel.instance.AddPost(post);
             Console.WriteLine("Post added!");
         }
-        public static void EditOrDeletePost()
+        public static void EditOrDeletePost(ViewManager vm)
         {
-            var posts = RedditModel.instance.GetPostsByUser(ViewManager.currentUser.username);
+            var posts = RedditModel.instance.GetPostsByUser(vm.currentUser.username);
             if (posts.Count == 0)
             {
                 Console.WriteLine("You have no posts to edit or delete.");
                 return;
             }
-            DisplayUserPosts();
+            DisplayUserPosts(vm);
             Console.Write("Choose post number: ");
             int choice = Convert.ToInt32(Console.ReadLine());
             if (choice > 0 && choice <= posts.Count)
