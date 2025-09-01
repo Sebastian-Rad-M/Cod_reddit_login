@@ -2,16 +2,21 @@
 namespace Reddit_app
 {
     internal class View
-    {   
+    {
+        protected ViewManager vm;
         protected string content;
         protected List<Option> menu;
-        protected void Initialize() {
-        
+        protected View(ViewManager vm)
+        {
+            this.vm = vm;
         }
+        public virtual void Initialize() { }
         protected void Draw()
         {
             Console.Clear();
+            Initialize();
             Console.WriteLine(content);
+            
             foreach (var option in menu)
             {
                 Console.WriteLine($"{option.optionId}. {option.optionText}");
@@ -21,6 +26,7 @@ namespace Reddit_app
             while (true)
             {
                 Draw();
+               
                 Console.Write("Select an option: ");
                 var input = Console.ReadLine();
 
@@ -35,7 +41,6 @@ namespace Reddit_app
                         {
                             break;
                         }
-                   
                     }
                     else
                     {
