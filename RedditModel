@@ -1,4 +1,6 @@
 
+using System.Text.Json;
+
 namespace Reddit_app
 {
     internal class RedditModel
@@ -14,7 +16,36 @@ namespace Reddit_app
 
 
         private List<RedditUser> users = new List<RedditUser>();
-      
+        private List<RedditPost> posts = new List<RedditPost>();
+
+        private const string UsersFile = "users.json";
+        private const string PostsFile = "posts.json";
+        private void SaveUsers()
+        {
+            File.WriteAllText(UsersFile, JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        private void SavePosts()
+        {
+            File.WriteAllText(PostsFile, JsonSerializer.Serialize(posts, new JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        public void LoadData()
+        {
+            if (File.Exists(UsersFile))
+            {
+                var json = File.ReadAllText(UsersFile);
+                users = JsonSerializer.Deserialize<List<RedditUser>>(json) ?? new List<RedditUser>();
+            }
+
+            if (File.Exists(PostsFile))
+            {
+                var json = File.ReadAllText(PostsFile);
+                posts = JsonSerializer.Deserialize<List<RedditPost>>(json) ?? new List<RedditPost>();
+            }
+        }
+
+
         public RedditUser GetRedditUserByUsername(string username)
         {
             return users.FirstOrDefault(u => u.username == username);
@@ -22,14 +53,17 @@ namespace Reddit_app
         }
         public bool AddNewUser(string username, string pass)
         {   if(GetRedditUserByUsername(username)!=null) {return false;}
-            users.Add(new RedditUser(username, pass)); return true;
+            users.Add(new RedditUser(username, pass));
+            SaveUsers(); 
+            return true;
         } 
         public void DeleteUser(RedditUser u)
         {
             users.Remove(u);
+            SaveUsers();
         }
 
-        private List<RedditPost> posts = new List<RedditPost>();
+      
         public List<RedditPost> GetAllPosts()
         {
             return posts;
@@ -41,26 +75,20 @@ namespace Reddit_app
         public void AddPost(RedditPost post)
         {
             posts.Add(post);
+            SavePosts();
         }
         public void RemovePost(RedditPost post)
         {
             posts.Remove(post);
+            SavePosts();
         }
         public void UpdatePost(RedditPost post, string newTitle, string newContent)
         {
             post.title = newTitle;
             post.content = newContent;
+            SavePosts();
         }
-        public static void DummyData()
-        {
-            RedditModel.instance.AddNewUser("alex", "alex");
-            RedditModel.instance.AddNewUser("bogdan", "bogdan");
-            RedditModel.instance.AddNewUser("cristina", "cristina");
-            RedditModel.instance.AddPost(new RedditPost("alex", "Salut!", "prima mea postare"));
-            RedditModel.instance.AddPost(new RedditPost("bogdan", "cum modific data", "cum modific data calculatorului meu, model asus g234 cu gpu mai mare decat modelul anterior"));
-
-
-        }
+        
     }
 
 
