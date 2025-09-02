@@ -4,11 +4,12 @@ namespace Reddit_app
     internal class RedditPost
     {
         readonly Guid uuid = Guid.NewGuid();
-      //  Guid authorUuid;
-        public string author;
-        public string title;
-        public string content;
+        //  Guid authorUuid;
+        public string author { get; set; }
+        public string title { get; set; }
+        public string content { get; set; }
         readonly public DateTime time = DateTime.UtcNow;
+        public RedditPost() { }
         public RedditPost(string postAuthorName, string postTitle, string postContent)
         {
 
@@ -19,11 +20,22 @@ namespace Reddit_app
         }
         public void ShowPost() 
         { 
-        Console.WriteLine(author + "---" + title);
-        if(content.Length>20) {Console.WriteLine(content.Substring(0,50)+"...");}
-        else {Console.WriteLine(content); }
-        Console.WriteLine('\n');
-
+        
+            if (!string.IsNullOrEmpty(content))
+            {
+                if (content.Length > 20)
+                {
+                    Console.WriteLine(author + "---" + title);
+                    Console.WriteLine(content.Substring(0, 20) + "...");
+                    Console.WriteLine('\n');
+                }
+                else
+                {
+                    Console.WriteLine(author + "---" + title);
+                    Console.WriteLine(content);
+                    Console.WriteLine('\n');
+                }
+            }
         }
     }
 }
