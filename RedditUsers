@@ -22,9 +22,9 @@ namespace Reddit_app
     public class RedditUser
     {
         readonly Guid uuid = Guid.NewGuid();
-        public string username;
-        private string passwordHash;
-
+        public string username { get; set; }
+        public string passwordHash { get; set; }
+        public RedditUser() { }
         public RedditUser(string name, string pass)
         {
             username = name;
